@@ -1,0 +1,250 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 700px;
+                 height: 500px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 700px;
+                 height: 500px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "Agassi A.", "label": "Agassi A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Puerta M.", "label": "Puerta M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Schalken S.", "label": "Schalken S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zabaleta M.", "label": "Zabaleta M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Philippoussis M.", "label": "Philippoussis M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arazi H.", "label": "Arazi H.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sampras P.", "label": "Sampras P.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kafelnikov Y.", "label": "Kafelnikov Y.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alami K.", "label": "Alami K.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Manta L.", "label": "Manta L.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Llodra M.", "label": "Llodra M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Alonso J.", "label": "Alonso J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Jonsson F.", "label": "Jonsson F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vicente F.", "label": "Vicente F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Escude N.", "label": "Escude N.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Behrend T.", "label": "Behrend T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Meligeni F.", "label": "Meligeni F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bjorkman J.", "label": "Bjorkman J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stoltenberg J.", "label": "Stoltenberg J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vanek J.", "label": "Vanek J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Black W.", "label": "Black W.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gambill J.M.", "label": "Gambill J.M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rosset M.", "label": "Rosset M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Clavet F.", "label": "Clavet F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hrbaty D.", "label": "Hrbaty D.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ivanisevic G.", "label": "Ivanisevic G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Corretja A.", "label": "Corretja A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sargsian S.", "label": "Sargsian S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dosedel S.", "label": "Dosedel S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Boutter J.", "label": "Boutter J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Srichaphan P.", "label": "Srichaphan P.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Squillari F.", "label": "Squillari F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Dupuis A.", "label": "Dupuis A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rodriguez M.", "label": "Rodriguez M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "El Aynaoui Y.", "label": "El Aynaoui Y.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Parmar A.", "label": "Parmar A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Haas T.", "label": "Haas T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ferrero J.C.", "label": "Ferrero J.C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Clement A.", "label": "Clement A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Courier J.", "label": "Courier J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Krajicek R.", "label": "Krajicek R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vinciguerra A.", "label": "Vinciguerra A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Federer R.", "label": "Federer R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Chang M.", "label": "Chang M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kroslak J.", "label": "Kroslak J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ferreira W.", "label": "Ferreira W.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Bastl G.", "label": "Bastl G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Johansson T.", "label": "Johansson T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Draper S.", "label": "Draper S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tieleman L.", "label": "Tieleman L.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Fromberg R.", "label": "Fromberg R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Enqvist T.", "label": "Enqvist T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pretzsch A.", "label": "Pretzsch A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Grosjean S.", "label": "Grosjean S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Motomura G.", "label": "Motomura G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hill M.", "label": "Hill M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Saulnier C.", "label": "Saulnier C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Henman T.", "label": "Henman T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Golmard J.", "label": "Golmard J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hewitt L.", "label": "Hewitt L.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Goldstein P.", "label": "Goldstein P.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Voinea A.", "label": "Voinea A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Karbacher B.", "label": "Karbacher B.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ilie A.", "label": "Ilie A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tarango J.", "label": "Tarango J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Novak J.", "label": "Novak J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pioline C.", "label": "Pioline C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kulti N.", "label": "Kulti N.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Diaz J.", "label": "Diaz J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Knippschild J.", "label": "Knippschild J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Vacek D.", "label": "Vacek D.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Koubek S.", "label": "Koubek S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Rochus C.", "label": "Rochus C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Norman M.", "label": "Norman M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kiefer N.", "label": "Kiefer N.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Canas G.", "label": "Canas G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Cadart R.", "label": "Cadart R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stafford G.", "label": "Stafford G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Santoro F.", "label": "Santoro F.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lopez-Moron A.", "label": "Lopez-Moron A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lapentti N.", "label": "Lapentti N.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Medvedev A.", "label": "Medvedev A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gaudio G.", "label": "Gaudio G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Martin T.", "label": "Martin T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Black B.", "label": "Black B.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mirnyi M.", "label": "Mirnyi M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Agenor R.", "label": "Agenor R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mamiit C.", "label": "Mamiit C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Pozzi G.", "label": "Pozzi G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Hipfl M.", "label": "Hipfl M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Paes L.", "label": "Paes L.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Petrovic D.", "label": "Petrovic D.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Okun N.", "label": "Okun N.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sluiter R.", "label": "Sluiter R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Portas A.", "label": "Portas A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kuerten G.", "label": "Kuerten G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Zib T.", "label": "Zib T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "O\u0027Brien A.", "label": "O\u0027Brien A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Costa A.", "label": "Costa A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ullyett K.", "label": "Ullyett K.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Delgado J.", "label": "Delgado J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Arthurs W.", "label": "Arthurs W.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tillstrom M.", "label": "Tillstrom M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Woodruff C.", "label": "Woodruff C.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Blanco G.", "label": "Blanco G.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Schuettler R.", "label": "Schuettler R.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Marin J.A.", "label": "Marin J.A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sekulov J.", "label": "Sekulov J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Ljubicic I.", "label": "Ljubicic I.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gaudenzi A.", "label": "Gaudenzi A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sirianni J.", "label": "Sirianni J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Woodforde M.", "label": "Woodforde M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Kucera K.", "label": "Kucera K.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Safin M.", "label": "Safin M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Martin A.", "label": "Martin A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Lareau S.", "label": "Lareau S.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Tabara M.", "label": "Tabara M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Stanoytchev O.", "label": "Stanoytchev O.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Wessels P.", "label": "Wessels P.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Berasategui A.", "label": "Berasategui A.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Gumy H.", "label": "Gumy H.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Spadea V.", "label": "Spadea V.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Woodbridge T.", "label": "Woodbridge T.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Siemerink J.", "label": "Siemerink J.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Sanguinetti D.", "label": "Sanguinetti D.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Damm M.", "label": "Damm M.", "shape": "dot", "size": 10}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Mantilla F.", "label": "Mantilla F.", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "Agassi A.", "to": "Puerta M.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Schalken S.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Zabaleta M.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Philippoussis M.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Arazi H.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Sampras P.", "width": 1}, {"arrows": "to", "from": "Agassi A.", "to": "Kafelnikov Y.", "width": 1}, {"arrows": "to", "from": "Alami K.", "to": "Manta L.", "width": 1}, {"arrows": "to", "from": "Alami K.", "to": "Llodra M.", "width": 1}, {"arrows": "to", "from": "Arazi H.", "to": "Alonso J.", "width": 1}, {"arrows": "to", "from": "Arazi H.", "to": "Jonsson F.", "width": 1}, {"arrows": "to", "from": "Arazi H.", "to": "Vicente F.", "width": 1}, {"arrows": "to", "from": "Arazi H.", "to": "Escude N.", "width": 1}, {"arrows": "to", "from": "Behrend T.", "to": "Meligeni F.", "width": 1}, {"arrows": "to", "from": "Bjorkman J.", "to": "Stoltenberg J.", "width": 1}, {"arrows": "to", "from": "Bjorkman J.", "to": "Vanek J.", "width": 1}, {"arrows": "to", "from": "Black W.", "to": "Gambill J.M.", "width": 1}, {"arrows": "to", "from": "Black W.", "to": "Rosset M.", "width": 1}, {"arrows": "to", "from": "Clavet F.", "to": "Hrbaty D.", "width": 1}, {"arrows": "to", "from": "Clavet F.", "to": "Ivanisevic G.", "width": 1}, {"arrows": "to", "from": "Corretja A.", "to": "Sargsian S.", "width": 1}, {"arrows": "to", "from": "Dosedel S.", "to": "Boutter J.", "width": 1}, {"arrows": "to", "from": "Dosedel S.", "to": "Srichaphan P.", "width": 1}, {"arrows": "to", "from": "Dosedel S.", "to": "Squillari F.", "width": 1}, {"arrows": "to", "from": "Dupuis A.", "to": "Rodriguez M.", "width": 1}, {"arrows": "to", "from": "El Aynaoui Y.", "to": "Parmar A.", "width": 1}, {"arrows": "to", "from": "El Aynaoui Y.", "to": "Haas T.", "width": 1}, {"arrows": "to", "from": "El Aynaoui Y.", "to": "Ferrero J.C.", "width": 1}, {"arrows": "to", "from": "El Aynaoui Y.", "to": "Clement A.", "width": 1}, {"arrows": "to", "from": "Escude N.", "to": "Courier J.", "width": 1}, {"arrows": "to", "from": "Escude N.", "to": "Krajicek R.", "width": 1}, {"arrows": "to", "from": "Escude N.", "to": "Vinciguerra A.", "width": 1}, {"arrows": "to", "from": "Federer R.", "to": "Chang M.", "width": 1}, {"arrows": "to", "from": "Federer R.", "to": "Kroslak J.", "width": 1}, {"arrows": "to", "from": "Ferreira W.", "to": "Bastl G.", "width": 1}, {"arrows": "to", "from": "Ferreira W.", "to": "Johansson T.", "width": 1}, {"arrows": "to", "from": "Ferreira W.", "to": "Clavet F.", "width": 1}, {"arrows": "to", "from": "Ferrero J.C.", "to": "Draper S.", "width": 1}, {"arrows": "to", "from": "Ferrero J.C.", "to": "Tieleman L.", "width": 1}, {"arrows": "to", "from": "Fromberg R.", "to": "Enqvist T.", "width": 1}, {"arrows": "to", "from": "Fromberg R.", "to": "Pretzsch A.", "width": 1}, {"arrows": "to", "from": "Grosjean S.", "to": "Motomura G.", "width": 1}, {"arrows": "to", "from": "Grosjean S.", "to": "Hill M.", "width": 1}, {"arrows": "to", "from": "Haas T.", "to": "Saulnier C.", "width": 1}, {"arrows": "to", "from": "Henman T.", "to": "Golmard J.", "width": 1}, {"arrows": "to", "from": "Henman T.", "to": "Grosjean S.", "width": 1}, {"arrows": "to", "from": "Hewitt L.", "to": "Goldstein P.", "width": 1}, {"arrows": "to", "from": "Hewitt L.", "to": "Corretja A.", "width": 1}, {"arrows": "to", "from": "Hewitt L.", "to": "Voinea A.", "width": 1}, {"arrows": "to", "from": "Hill M.", "to": "Karbacher B.", "width": 1}, {"arrows": "to", "from": "Ilie A.", "to": "Tarango J.", "width": 1}, {"arrows": "to", "from": "Ilie A.", "to": "Novak J.", "width": 1}, {"arrows": "to", "from": "Ivanisevic G.", "to": "Pioline C.", "width": 1}, {"arrows": "to", "from": "Johansson T.", "to": "Kulti N.", "width": 1}, {"arrows": "to", "from": "Jonsson F.", "to": "Diaz J.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "Knippschild J.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "Vacek D.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "Koubek S.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "Rochus C.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "El Aynaoui Y.", "width": 1}, {"arrows": "to", "from": "Kafelnikov Y.", "to": "Norman M.", "width": 1}, {"arrows": "to", "from": "Kiefer N.", "to": "Canas G.", "width": 1}, {"arrows": "to", "from": "Kiefer N.", "to": "Behrend T.", "width": 1}, {"arrows": "to", "from": "Kiefer N.", "to": "Alami K.", "width": 1}, {"arrows": "to", "from": "Kiefer N.", "to": "Ferreira W.", "width": 1}, {"arrows": "to", "from": "Koubek S.", "to": "Cadart R.", "width": 1}, {"arrows": "to", "from": "Koubek S.", "to": "Stafford G.", "width": 1}, {"arrows": "to", "from": "Krajicek R.", "to": "Santoro F.", "width": 1}, {"arrows": "to", "from": "Kroslak J.", "to": "Lopez-Moron A.", "width": 1}, {"arrows": "to", "from": "Lapentti N.", "to": "Medvedev A.", "width": 1}, {"arrows": "to", "from": "Llodra M.", "to": "Gaudio G.", "width": 1}, {"arrows": "to", "from": "Martin T.", "to": "Black B.", "width": 1}, {"arrows": "to", "from": "Mirnyi M.", "to": "Agenor R.", "width": 1}, {"arrows": "to", "from": "Mirnyi M.", "to": "Dupuis A.", "width": 1}, {"arrows": "to", "from": "Norman M.", "to": "Mamiit C.", "width": 1}, {"arrows": "to", "from": "Norman M.", "to": "Pozzi G.", "width": 1}, {"arrows": "to", "from": "Norman M.", "to": "Bjorkman J.", "width": 1}, {"arrows": "to", "from": "Norman M.", "to": "Hewitt L.", "width": 1}, {"arrows": "to", "from": "Norman M.", "to": "Kiefer N.", "width": 1}, {"arrows": "to", "from": "Novak J.", "to": "Hipfl M.", "width": 1}, {"arrows": "to", "from": "Paes L.", "to": "Petrovic D.", "width": 1}, {"arrows": "to", "from": "Philippoussis M.", "to": "Okun N.", "width": 1}, {"arrows": "to", "from": "Philippoussis M.", "to": "Sluiter R.", "width": 1}, {"arrows": "to", "from": "Philippoussis M.", "to": "Ilie A.", "width": 1}, {"arrows": "to", "from": "Portas A.", "to": "Kuerten G.", "width": 1}, {"arrows": "to", "from": "Pozzi G.", "to": "Zib T.", "width": 1}, {"arrows": "to", "from": "Pretzsch A.", "to": "O\u0027Brien A.", "width": 1}, {"arrows": "to", "from": "Rochus C.", "to": "Costa A.", "width": 1}, {"arrows": "to", "from": "Rochus C.", "to": "Ullyett K.", "width": 1}, {"arrows": "to", "from": "Rochus C.", "to": "Mirnyi M.", "width": 1}, {"arrows": "to", "from": "Rosset M.", "to": "Delgado J.", "width": 1}, {"arrows": "to", "from": "Sampras P.", "to": "Arthurs W.", "width": 1}, {"arrows": "to", "from": "Sampras P.", "to": "Tillstrom M.", "width": 1}, {"arrows": "to", "from": "Sampras P.", "to": "Black W.", "width": 1}, {"arrows": "to", "from": "Sampras P.", "to": "Dosedel S.", "width": 1}, {"arrows": "to", "from": "Sampras P.", "to": "Woodruff C.", "width": 1}, {"arrows": "to", "from": "Schalken S.", "to": "Blanco G.", "width": 1}, {"arrows": "to", "from": "Schuettler R.", "to": "Marin J.A.", "width": 1}, {"arrows": "to", "from": "Sekulov J.", "to": "Ljubicic I.", "width": 1}, {"arrows": "to", "from": "Sluiter R.", "to": "Gaudenzi A.", "width": 1}, {"arrows": "to", "from": "Squillari F.", "to": "Sirianni J.", "width": 1}, {"arrows": "to", "from": "Squillari F.", "to": "Woodforde M.", "width": 1}, {"arrows": "to", "from": "Srichaphan P.", "to": "Kucera K.", "width": 1}, {"arrows": "to", "from": "Stafford G.", "to": "Safin M.", "width": 1}, {"arrows": "to", "from": "Tieleman L.", "to": "Martin A.", "width": 1}, {"arrows": "to", "from": "Tillstrom M.", "to": "Lareau S.", "width": 1}, {"arrows": "to", "from": "Ullyett K.", "to": "Tabara M.", "width": 1}, {"arrows": "to", "from": "Vacek D.", "to": "Stanoytchev O.", "width": 1}, {"arrows": "to", "from": "Vanek J.", "to": "Wessels P.", "width": 1}, {"arrows": "to", "from": "Vicente F.", "to": "Berasategui A.", "width": 1}, {"arrows": "to", "from": "Vicente F.", "to": "Martin T.", "width": 1}, {"arrows": "to", "from": "Vinciguerra A.", "to": "Gumy H.", "width": 1}, {"arrows": "to", "from": "Vinciguerra A.", "to": "Paes L.", "width": 1}, {"arrows": "to", "from": "Voinea A.", "to": "Spadea V.", "width": 1}, {"arrows": "to", "from": "Voinea A.", "to": "Portas A.", "width": 1}, {"arrows": "to", "from": "Woodbridge T.", "to": "Siemerink J.", "width": 1}, {"arrows": "to", "from": "Woodforde M.", "to": "Sanguinetti D.", "width": 1}, {"arrows": "to", "from": "Woodruff C.", "to": "Damm M.", "width": 1}, {"arrows": "to", "from": "Woodruff C.", "to": "Sekulov J.", "width": 1}, {"arrows": "to", "from": "Woodruff C.", "to": "Fromberg R.", "width": 1}, {"arrows": "to", "from": "Woodruff C.", "to": "Henman T.", "width": 1}, {"arrows": "to", "from": "Zabaleta M.", "to": "Mantilla F.", "width": 1}, {"arrows": "to", "from": "Zabaleta M.", "to": "Woodbridge T.", "width": 1}, {"arrows": "to", "from": "Clement A.", "to": "Federer R.", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
